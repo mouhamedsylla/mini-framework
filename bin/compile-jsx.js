@@ -88,4 +88,4 @@ export default function compileJSX() {
     return vdom
 }
 
-console.log(compileJSX().children[4]);
+//console.log(compileJSX().children[4]);
