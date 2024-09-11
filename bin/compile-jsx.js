@@ -50,7 +50,9 @@ const parse = (markup) => {
 
         // Si c'est une nouvelle balise ouvrante
         if (tagName) {
+            //const props = getAttributes(attributes);
             const node = h(tagName, {}, []);
+            node.props = getAttributes(attributes);
             if (!vdom) {
                 vdom = node;
             }
@@ -75,6 +77,23 @@ const parse = (markup) => {
     }
 }
 
+function getAttributes(attributes) {
+    const props = {};
+    attributes = attributes.trim();
+    if (!attributes) {
+        return props;
+    }
+
+    const attrPattern = /([a-z][\w-.:]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|(\S+)))?/gi;
+    let match = null;
+    while ((match = attrPattern.exec(attributes)) !== null) {
+        const name = match[1];
+        const value = match[2] || match[3] || match[4] || '';
+        props[name] = value;
+    }
+    return props;
+}
+
 export default function compileJSX() {
     let jsx;
     
@@ -88,4 +107,4 @@ export default function compileJSX() {
     return vdom
 }
 
-//console.log(compileJSX().children[4]);
+console.log(compileJSX());

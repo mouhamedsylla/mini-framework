@@ -1,4 +1,4 @@
-import { DOM_TYPES, mapTextNodes } from './helper.js'
+import { DOM_TYPES, mapTextNodes, setAttributes } from './helper.js'
 
 // create an virtual element
 export function h(tag, props = {}, children = []) {
@@ -18,13 +18,6 @@ export function hString(str) {
     }
 }
 
-// create an virtual fragment
-export function hFragment(children) {
-    return {
-        children: mapTextNodes(children),
-        type: DOM_TYPES.FRAGMENT,
-    }
-}
 
 function createTextNode(vdom, parentEl) {
     const { value } = vdom
@@ -38,10 +31,16 @@ function createElementNode(vdom, parentEl) {
     const { tag, children } = vdom
 
     const element = document.createElement(tag)
+    addProps(element, vdom)
     vdom.el = element
 
     children.forEach(child => mountDOM(child, element))
     parentEl.appendChild(element)           
+}
+
+function addProps(el, vdom) {
+    //const { ...props } = vdom.props
+    setAttributes(el, vdom.props)
 }
 
 // mounting a virtual node to a real node

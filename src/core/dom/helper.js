@@ -68,3 +68,7 @@ function setClass(el, className) {
 export function setStyle(el, name, value) {
     el.style[name] = value
 }
+
+export function extractPropsAndEvents(vdom) {
+    const { on: events = {} , ...props} = vdom.props
+}
