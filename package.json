@@ -1,0 +1,9 @@
+{
+    "name": "mini",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "node bin/compile-jsx.js", 
+        "start": "node src/index.js"   
+      }
+}
