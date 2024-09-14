@@ -56,3 +56,4 @@ export function mountDOM(vdom, parentEl) {
             console.error('Unknown vdom type:', vdom.type)
     }
 }
+

@@ -1,9 +1,13 @@
 {
     "name": "mini",
     "version": "1.0.0",
+    "bin": {
+      "mini": "./_bin/mini.js"
+    },
     "type": "module",
     "scripts": {
-        "build": "node bin/compile-jsx.js", 
-        "start": "node src/index.js"   
-      }
-}
+        "start": "node ./_lib/core/runtime/runtime.js"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+  }  

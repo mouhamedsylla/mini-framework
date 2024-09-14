@@ -3,6 +3,7 @@ import { hString } from './vdom.js'
 export const DOM_TYPES = {
     TEXT: 'text',
     ELEMENT: 'element',
+    JS: 'js',
 }
 
 
@@ -69,6 +70,16 @@ export function setStyle(el, name, value) {
     el.style[name] = value
 }
 
-export function extractPropsAndEvents(vdom) {
-    const { on: events = {} , ...props} = vdom.props
+// export function extractPropsAndEvents(vdom) {
+//     const { on: events = {} , ...props} = vdom.props
+// }
+
+export function addEventListeners(listeners = {}, el) {
+    for (const [name, listener] of Object.entries(listeners)) {
+        el.addEventListener(name, listener)
+    }
+}
+
+export function addEventListener(eventName, handler, el) {
+    el.addEventListener(eventName, handler)
 }

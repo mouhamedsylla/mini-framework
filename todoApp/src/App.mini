@@ -1,0 +1,25 @@
+function App() {
+    return (
+        <mini>
+            <context>
+                const items = ['item1', 'item2', 'item3'];
+                const user = { isLoggedIn: true, name: 'John Doe' };
+                const myName = 'John Doe';
+                const Test = (myName) => {
+                    return `<p>${myName}</p>`
+                }
+            </context>
+            <div>
+                <p>
+                    {user.isLoggedIn ? `Logged in as ${user.name}` : 'Please log in'}
+                </p>
+                <ul>
+                    {items.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+                <p>Hello, {myName}</p>
+                {[1, 2, 3].map(item => `<li>${item}</li>`).join('')}
+                {Test(myName)}
+            </div>        
+        </mini>
+    )
+}
