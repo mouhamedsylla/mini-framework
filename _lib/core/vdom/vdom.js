@@ -1,4 +1,4 @@
-import { DOM_TYPES, mapTextNodes, setAttributes } from './helper.js'
+import { DOM_TYPES, mapTextNodes, setAttributes, addEventListeners, extractPropsAndEvents } from './helper.js'
 
 // create an virtual element
 export function h(tag, props = {}, children = []) {
@@ -39,8 +39,9 @@ function createElementNode(vdom, parentEl) {
 }
 
 function addProps(el, vdom) {
-    //const { ...props } = vdom.props
-    setAttributes(el, vdom.props)
+    const { props: attrs, events } = extractPropsAndEvents(vdom)
+    vdom.listeners = addEventListeners(events, el)
+    setAttributes(el, attrs)
 }
 
 // mounting a virtual node to a real node
@@ -56,4 +57,6 @@ export function mountDOM(vdom, parentEl) {
             console.error('Unknown vdom type:', vdom.type)
     }
 }
+
+
 

@@ -42,7 +42,7 @@ export function setAttributes(el, attrs) {
 export function setAttribute(el, name, value) {
     if (value == null) {
         removeAttribute(el, name)
-    } else if (name.startWith('data-')) {
+    } else if (name.startsWith('data-')) {
         el.setAttribute(name, value)
     } else {
         el[name] = value
@@ -70,16 +70,32 @@ export function setStyle(el, name, value) {
     el.style[name] = value
 }
 
-// export function extractPropsAndEvents(vdom) {
-//     const { on: events = {} , ...props} = vdom.props
-// }
+export function extractPropsAndEvents(vdom) {
+    const { on: events = {}, ...props } = vdom.props
+    delete props.key
+  
+    return { props, events }
+  }
 
 export function addEventListeners(listeners = {}, el) {
-    for (const [name, listener] of Object.entries(listeners)) {
-        el.addEventListener(name, listener)
-    }
+    const addedListeners = {}
+
+    Object.entries(listeners).forEach(([eventName, handler]) => {
+      const listener = addEventListener(eventName, handler, el)
+      addedListeners[eventName] = listener
+    })
+  
+    return addedListeners
 }
 
 export function addEventListener(eventName, handler, el) {
-    el.addEventListener(eventName, handler)
+    function boundHandler() {
+        handler(...arguments)
+    }
+    el.addEventListener(eventName, boundHandler)
+    return boundHandler
 }
+
+// export TraverVdom() {
+
+// }
