@@ -1,11 +1,18 @@
 const Header = () => {
     const Component = `
-        <div className="mt-3">
-            <div className="input-group mb-3">
-                <input onChange=handleChange type="text" className="form-control" placeholder="add something" aria-label="Recipient's username" aria-describedby="basic-addon2"/>
-                <div className="input-group-append">
-                    <button onClick=handleClick className="btn btn-outline-secondary" type="button">Add</button>
-                </div>
+        <div className="header" data-testid="header">
+            <h1>todos</h1>
+            <div className="input-container">
+                <input 
+                    class="new-todo" 
+                    id="todo-input" 
+                    type="text" 
+                    data-testid="text-input" 
+                    placeholder="What needs to be done?" 
+                    value=""
+                >
+    
+                <label class="visually-hidden" for="todo-input">New Todo Input</label>
             </div>
         </div>
     `

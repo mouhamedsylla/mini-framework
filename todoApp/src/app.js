@@ -1,23 +1,26 @@
 import { run } from "../../_lib/core/runtime/runtime.js";
+import footer from "./components/footer.js";
 import header from "./components/header.js";
 
 const app = () => {
     const context = {
         App: () => component,
-        ...header()
+        ...header(),
+        ...footer(),
     }
     const component = 
     `
-    <div className="d-flex flex-column align-items-center justify-content-center">
-        <h1>Todo App</h1>
+    <section className="todoapp" id="root">
         {context.Header()}
-    </div>
+    </section>
+    
+    {context.Footer()}
     `
 
     return context;
 }
 
-const root = document.getElementById('app')
+const root = document.body
 const context = app()
 const component = context.App()
 
