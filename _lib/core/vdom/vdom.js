@@ -1,4 +1,11 @@
-import { DOM_TYPES, mapTextNodes, setAttributes, addEventListeners, extractPropsAndEvents } from './helper.js'
+import { 
+    DOM_TYPES, 
+    mapTextNodes, 
+    setAttributes, 
+    addEventListeners, 
+    extractPropsAndEvents,
+    removeEventListeners,
+ } from './helper.js'
 
 // create an virtual element
 export function h(tag, props = {}, children = []) {
@@ -38,6 +45,22 @@ function createElementNode(vdom, parentEl) {
     parentEl.appendChild(element)           
 }
 
+function removeTextNode(vdom) {
+    const { el } = vdom
+    el.remove()
+}
+
+function removeElementNode(vdom) {
+    const { el, children, listeners } = vdom
+    children.forEach(unmountDOM)
+    el.remove()
+
+    if (listeners) {
+        removeEventListeners(listeners, el)
+        delete vdom.listeners
+    }
+}
+
 function addProps(el, vdom) {
     const { props: attrs, events } = extractPropsAndEvents(vdom)
     vdom.listeners = addEventListeners(events, el)
@@ -58,5 +81,22 @@ export function mountDOM(vdom, parentEl) {
     }
 }
 
+export function unmountDOM(vdom) {
+    const { type } = vdom
+    switch (type) {
+        case DOM_TYPES.TEXT: {
+          removeTextNode(vdom)
+          break
+        }
+    
+        case DOM_TYPES.ELEMENT: {
+          removeElementNode(vdom)
+          break
+        }
 
+        default: {
+            console.error('Unknown vdom type:', type)
+        }
+    }
+}
 

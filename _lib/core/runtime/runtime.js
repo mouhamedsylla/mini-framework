@@ -3,14 +3,14 @@ import { EvalJS } from './evalJS.js';
 import { mountDOM } from '../vdom/vdom.js';
 
 const compiler = new Compiler()
+let vdom = null
 
 function run(context, component, root) {
     const evalutedCode = EvalJS(component, context)
     compiler.setCode(evalutedCode)
     compiler.setContext(context)
-    const vdom = compiler.compile()
-    console.log(vdom)
+    vdom = compiler.compile()
     mountDOM(vdom, root)
 }
 
-export { run }
+export { run, vdom }

@@ -1,7 +1,8 @@
-const Footer = () => {
+const footer = () => {
     const Component = `
         <footer className="info">
-            <p>Double-click to edit a todo</p><p>Created by the TodoMVC Team</p>
+            <p>Double-click to edit a todo</p>
+            <p>Created by the TodoMVC Team</p>
             <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
         </footer>
     `
@@ -10,4 +11,4 @@ const Footer = () => {
     }
 }
 
-export default Footer;
+export default footer;

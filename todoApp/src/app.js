@@ -3,6 +3,7 @@ import footer from "./components/footer.js";
 import header from "./components/header.js";
 
 const app = () => {
+
     const context = {
         App: () => component,
         ...header(),
@@ -16,12 +17,13 @@ const app = () => {
     
     {context.Footer()}
     `
-
     return context;
 }
 
-const root = document.body
-const context = app()
-const component = context.App()
+const context = app();
 
-run(context, component, root)
+run(
+    context,
+    context.App(),
+    document.getElementById('app')
+)

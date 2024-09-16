@@ -4,7 +4,7 @@ const Header = () => {
             <h1>todos</h1>
             <div className="input-container">
                 <input 
-                    class="new-todo" 
+                    className="new-todo" 
                     id="todo-input" 
                     type="text" 
                     data-testid="text-input" 
@@ -12,7 +12,7 @@ const Header = () => {
                     value=""
                 >
     
-                <label class="visually-hidden" for="todo-input">New Todo Input</label>
+                <label className="visually-hidden" for="todo-input">New Todo Input</label>
             </div>
         </div>
     `

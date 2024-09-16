@@ -1,5 +1,4 @@
 import { h, hString } from '../vdom/vdom.js';
-import { evalJS } from '../runtime/evalJS.js';
 
 export default class Compiler {
     constructor() {

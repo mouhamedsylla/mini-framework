@@ -21,6 +21,8 @@ export function mapTextNodes(children) {
     })
 }
 
+// ATTRIBUTES
+
 export function setAttributes(el, attrs) {
     const {className, style, ...rest} = attrs
 
@@ -39,6 +41,7 @@ export function setAttributes(el, attrs) {
     }
 }
 
+
 export function setAttribute(el, name, value) {
     if (value == null) {
         removeAttribute(el, name)
@@ -54,6 +57,8 @@ export function removeAttribute(el, name) {
     el.removeAttribute(name)
 }
 
+// CLASS
+
 function setClass(el, className) {
     el.className =''
 
@@ -66,10 +71,14 @@ function setClass(el, className) {
     }
 }
 
+
+// STYLE
 export function setStyle(el, name, value) {
     el.style[name] = value
 }
 
+
+// EVENTS
 export function extractPropsAndEvents(vdom) {
     const { on: events = {}, ...props } = vdom.props
     delete props.key
@@ -96,6 +105,8 @@ export function addEventListener(eventName, handler, el) {
     return boundHandler
 }
 
-// export TraverVdom() {
-
-// }
+export function removeEventListeners(listeners = {}, el) {
+    Object.entries(listeners).forEach(([eventName, handler]) => {
+      el.removeEventListener(eventName, handler)
+    })
+  }

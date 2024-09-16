@@ -1,5 +1,3 @@
-export let contextTrace = null
-
 const parseContext = (code) => {
     const contextRegex = /<context>([\s\S]*?)<\/context>/;
     const match = code.match(contextRegex);
@@ -12,8 +10,6 @@ const parseContext = (code) => {
             ${contextCode.replace(/const|let|var/g, 'context.')};
             return context;
         `)();
-        contextTrace = context
-        console.log("context trace: ", contextTrace)
     }
 
     return { code: code.replace(contextRegex, '').trim(), context };
