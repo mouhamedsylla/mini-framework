@@ -1,14 +1,9 @@
-import useState from "../../../_lib/core/stateManager/useState";
+import useState from "../../../_lib/core/stateManager/useState.js";
 
 
 const Header = () => {
 
-    const myState = new useState({ task: "Initial Task" });
-
-    console.log("myState.getState(av): ", myState.getState);
-    myState.setState({ task: "New Task" });
-    console.log("myState.getState(ap): ", myState.getState);
-    
+    const [state, setState] = new useState("");
 
     const Component = `
         <div className="header" data-testid="header">
@@ -21,7 +16,7 @@ const Header = () => {
                     type="text" 
                     data-testid="text-input" 
                     placeholder="What needs to be done?" 
-                    value=${myState.getState}
+                    value=${state}
                 />
 
                 <label className="visually-hidden" htmlFor="todo-input">New Todo Input</label>
@@ -32,12 +27,10 @@ const Header = () => {
         Header: () => Component,
         handleChange: (e) => {
             if (e.target.value.length < 2) {
-
                 return
             }
-            console.log("newTask(av): ", newTask);
-            setNewTask("aaaaaa")
-            console.log("newTask(ap): ", newTask);
+
+            setState("aaa");
             console.log(e.target.value)
         },
         handleClick: (e) => {

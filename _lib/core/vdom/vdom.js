@@ -69,6 +69,8 @@ function addProps(el, vdom) {
 
 // mounting a virtual node to a real node
 export function mountDOM(vdom, parentEl) {
+    console.log("vdom.el: ", vdom.tag);
+    
     switch (vdom.type) {
         case DOM_TYPES.TEXT:
             createTextNode(vdom, parentEl)

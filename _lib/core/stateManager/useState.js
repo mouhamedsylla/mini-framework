@@ -1,7 +1,9 @@
-/* let hooks = [];
+import { vdom } from "../runtime/runtime.js";
+
+let hooks = [];
 let hookIndex = 0;
 
-    export function useState(initialValue) {
+    /* export function useState(initialValue) {
     const state = hooks[hookIndex] || initialValue;
     const currentIndex = hookIndex;
 
@@ -14,19 +16,27 @@ let hookIndex = 0;
     return [state, setState];
 } */
 
-/* export function useState(initialValue) {
-    let _val = initialValue
-    const state = _val
-    const setState = newValue => {
-        _val = newValue
+    function useState(initialValue) {
+        let stateContainer = { value: initialValue };
+    
+        const getState = () => stateContainer.value;
+    
+        const setState = newValue => {
+            stateContainer.value = newValue;
+
+            console.log("getState(): ", getState());
+            
+            reRender();
+        };
+    
+        return [getState(), setState];
     }
-    return [state, setState];
-}
+    
 
 function reRender() {
     hookIndex = 0; // Réinitialise les hooks pour le prochain rendu
     const newVNode = App(); // Génére un nouveau Virtual DOM
-    const patches = diff(oldVNode, newVNode); // Compare l'ancien et le nouveau DOM virtuel
+    const patches = diff(vdom, newVNode); // Compare l'ancien et le nouveau DOM virtuel
     patch(document.body, patches); // Applique les changements au vrai DOM
     oldVNode = newVNode; // Sauvegarde le nouveau Virtual DOM
 }
@@ -79,9 +89,9 @@ function diff(oldVNode, newVNode) {
         children: patchChildren
     };
 }
- */
 
-class useState {
+
+/* class useState {
     constructor(initialState = {}) {
         this.state = initialState;
         this.listeners = [];
@@ -160,6 +170,6 @@ class useState {
             children: patchChildren
         };
     }
-}
+}*/
 
 export default useState
