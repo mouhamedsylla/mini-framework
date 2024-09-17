@@ -21,3 +21,13 @@ class Store {
         this.listeners.forEach(listener => listener(this.state));
     }
 }
+
+function useState(initialValue) {
+    let value = initialValue
+
+    const setState = (newState) => {
+        value = newState
+    }
+
+    return [() => value, setState]
+}

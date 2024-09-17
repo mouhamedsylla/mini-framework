@@ -10,12 +10,12 @@ const Header = () => {
                     data-testid="text-input" 
                     placeholder="What needs to be done?" 
                     value=""
-                >
-    
-                <label className="visually-hidden" for="todo-input">New Todo Input</label>
+                />
+
+                <label className="visually-hidden" htmlFor="todo-input">New Todo Input</label>
             </div>
-        </div>
-    `
+        </div>`
+        
     return {
         Header: () => Component,
         handleChange: (e) => {

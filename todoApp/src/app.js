@@ -11,11 +11,15 @@ const app = () => {
     }
     const component = 
     `
-    <section className="todoapp" id="root">
-        {context.Header()}
-    </section>
-    
-    {context.Footer()}
+    <div id="app">
+
+        <section className="todoapp" id="root">
+            {context.Header()}
+        </section>
+        
+        {context.Footer()}
+
+    </div>
     `
     return context;
 }
@@ -25,5 +29,5 @@ const context = app();
 run(
     context,
     context.App(),
-    document.getElementById('app')
+    document.body
 )
