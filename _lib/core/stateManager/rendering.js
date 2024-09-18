@@ -1,5 +1,4 @@
 import { run, vdom } from "../runtime/runtime.js";
-import { mountDOM, unmountDOM } from "../vdom/vdom.js"
 
 let globalContext = null;
 let globalRoot = null;
@@ -21,36 +20,38 @@ function render() {
     )
 
     const patches = diff(oldVDOM, vdom);
-    patch(globalRoot, patches);
+    console.log("patches: ", patches);
 
-    mountDOM(vdom, globalRoot)
+    patch(globalRoot, patches);
 }
 
 function patch(parent, patches, index = 0) {
 
+    console.log(`parent.childNodes[${index}]: `, parent.childNodes[index]);
     const $el = parent.childNodes[index]; // Le nœud DOM correspondant
-    if (!$el) {
-        return;
-    }
+    if (!$el) { return }
+
 
     console.log("patches.type: ", patches.type);
-    
+
     switch (patches.type) {
         case 'REPLACE':
-            //const newEl = render(patches.newNode); // Crée un nouvel élément à partir du nouveau DOM virtuel
-            //parent.replaceChild(newEl, $el);       // Remplace l'ancien élément
+            const newEl = createElement(patches.newNode); // Crée un nouvel élément à partir du nouveau DOM virtuel
+            parent.replaceChild(newEl, $el);       // Remplace l'ancien élément
             break;
 
         case 'UPDATE':
             // Mettre à jour les props
             patches.props.forEach(({ key, value }) => {
-                $el[key] = value; // Applique les nouvelles propriétés
+                if ($el[key] !== value) {
+                    $el[key] = value; // Appliquer les nouvelles propriétés uniquement si elles ont changé
+                }
             });
 
             // Mettre à jour les enfants
-            patches.children.forEach((childPatch, i) => {
-                patch($el, childPatch, i); // Applique récursivement les patchs sur les enfants
-            });
+            for (let i = 0; i < patches.children.length; i++) {
+                patch($el, patches.children[i], i); // Patch récursif sur les enfants
+            }
             break;
     }
 }
@@ -86,4 +87,26 @@ function diff(oldVNode, newVNode) {
     };
 }
 
-export { render, setContext, setRoot }
+function createElement(vnode) {
+    const el = document.createElement(vnode.tag);
+
+    // Appliquer les props
+    if (vnode.props) {
+        Object.keys(vnode.props).forEach(key => {
+            el[key] = vnode.props[key];
+        });
+    }
+
+    if (!vnode.children) { return }
+
+    // Ajouter les enfants
+    vnode.children.forEach(child => {
+        const childEl = createElement(child);
+        el.appendChild(childEl);
+    });
+
+    return el;
+}
+
+
+export { render, setContext, setRoot, globalRoot }

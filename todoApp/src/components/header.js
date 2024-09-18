@@ -30,7 +30,7 @@ const Header = () => {
                 return
             }
 
-            setState("aaa");
+            setState("AAA");
             console.log(e.target.value)
         },
         handleClick: (e) => {

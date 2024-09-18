@@ -34,7 +34,7 @@ function createTextNode(vdom, parentEl) {
     parentEl.appendChild(textNode)
 }
 
-function createElementNode(vdom, parentEl) {
+export function createElementNode(vdom, parentEl) {
     const { tag, children } = vdom
 
     const element = document.createElement(tag)
