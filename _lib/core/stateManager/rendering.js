@@ -12,7 +12,7 @@ function setRoot(root) {
 }
 
 function render() {
-    const oldVDOM = Object.assign({}, vdom)
+    const oldVDOM = vdom ? Object.assign({}, vdom) : null;
 
     run(
         globalContext,
@@ -27,10 +27,11 @@ function render() {
 
 function patch(parent, patches, index = 0) {
 
-    console.log(`parent.childNodes[${index}]: `, parent.childNodes[index]);
-    const $el = parent.childNodes[index]; // Le nœud DOM correspondant
+    //console.log(`parent.childNodes (${index}): `, parent.childNodes);
+    //console.log(`parent.childNodes[5]: `, parent.childNodes[5]);
+    if (!parent.childNodes[5]) { return }
+    const $el = parent.childNodes[index];
     if (!$el) { return }
-
 
     console.log("patches.type: ", patches.type);
 
@@ -53,16 +54,22 @@ function patch(parent, patches, index = 0) {
                 patch($el, patches.children[i], i); // Patch récursif sur les enfants
             }
             break;
+        case 'START':
+            break
+
     }
 }
 
 function diff(oldVNode, newVNode) {
-    console.log("oldVNode: ", oldVNode);
-    console.log("newVNode: ", newVNode);
+    /* console.log("oldVNode: ", oldVNode);
+    console.log("newVNode: ", newVNode); */
+    if (oldVNode === null) {
+        return { type: 'START' }
+    }
+
     if (oldVNode.tag !== newVNode.tag) {
         return { type: 'REPLACE', newNode: newVNode }; // Remplacer si les balises sont différentes
     }
-
 
     if (newVNode.props === null || newVNode.props === undefined) { return }
 
@@ -88,8 +95,11 @@ function diff(oldVNode, newVNode) {
 }
 
 function createElement(vnode) {
-    const el = document.createElement(vnode.tag);
+    if (typeof vnode === 'string' || typeof vnode === 'number') {
+        return document.createTextNode(vnode); // Créer un nœud de texte
+    }
 
+    const el = document.createElement(vnode.tag);
     // Appliquer les props
     if (vnode.props) {
         Object.keys(vnode.props).forEach(key => {
@@ -97,7 +107,7 @@ function createElement(vnode) {
         });
     }
 
-    if (!vnode.children) { return }
+    if (!vnode.children) { return el }
 
     // Ajouter les enfants
     vnode.children.forEach(child => {

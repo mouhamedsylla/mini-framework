@@ -14,7 +14,7 @@ const app = () => {
 
     const component =
         `
-    <div id="app">
+    <mini>
 
         <section className="todoapp" id="root">
             {context.Header()}
@@ -22,7 +22,7 @@ const app = () => {
         
         {context.Footer()}
 
-    </div>
+    </mini>
     `
     return context;
 }
