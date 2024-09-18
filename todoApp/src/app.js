@@ -1,5 +1,4 @@
-import { run, vdom } from "../../_lib/core/runtime/runtime.js";
-import { mountDOM } from "../../_lib/core/vdom/vdom.js";
+import { render, setContext, setRoot } from "../../_lib/core/stateManager/rendering.js";
 import footer from "./components/footer.js";
 import header from "./components/header.js";
 
@@ -10,8 +9,9 @@ const app = () => {
         ...header(),
         ...footer(),
     }
-    const component = 
-    `
+
+    const component =
+        `
     <div id="app">
 
         <section className="todoapp" id="root">
@@ -25,23 +25,7 @@ const app = () => {
     return context;
 }
 
-const context = app();
+setContext(app());
+setRoot(document.body)
 
-run(
-    context,
-    context.App(),
-)
-
-mountDOM(vdom, document.body)
-
-function render() {
-    const oldVDOM = Object.assign({}, vdom)
-
-    run(
-        context,
-        context.App(),
-    )
-
-    
-
-}
+render();

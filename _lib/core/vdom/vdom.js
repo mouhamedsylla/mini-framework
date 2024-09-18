@@ -1,11 +1,11 @@
-import { 
-    DOM_TYPES, 
-    mapTextNodes, 
-    setAttributes, 
-    addEventListeners, 
+import {
+    DOM_TYPES,
+    mapTextNodes,
+    setAttributes,
+    addEventListeners,
     extractPropsAndEvents,
     removeEventListeners,
- } from './helper.js'
+} from './helper.js'
 
 // create an virtual element
 export function h(tag, props = {}, children = []) {
@@ -42,17 +42,19 @@ function createElementNode(vdom, parentEl) {
     vdom.el = element
 
     children.forEach(child => mountDOM(child, element))
-    parentEl.appendChild(element)           
+    parentEl.appendChild(element)
 }
 
 function removeTextNode(vdom) {
     const { el } = vdom
+    if (!el) { return }
     el.remove()
 }
 
 function removeElementNode(vdom) {
     const { el, children, listeners } = vdom
     children.forEach(unmountDOM)
+    if (!el) { return }
     el.remove()
 
     if (listeners) {
@@ -69,8 +71,6 @@ function addProps(el, vdom) {
 
 // mounting a virtual node to a real node
 export function mountDOM(vdom, parentEl) {
-    console.log("vdom.el: ", vdom.tag);
-    
     switch (vdom.type) {
         case DOM_TYPES.TEXT:
             createTextNode(vdom, parentEl)
@@ -85,15 +85,16 @@ export function mountDOM(vdom, parentEl) {
 
 export function unmountDOM(vdom) {
     const { type } = vdom
+
     switch (type) {
         case DOM_TYPES.TEXT: {
-          removeTextNode(vdom)
-          break
+            removeTextNode(vdom)
+            break
         }
-    
+
         case DOM_TYPES.ELEMENT: {
-          removeElementNode(vdom)
-          break
+            removeElementNode(vdom)
+            break
         }
 
         default: {
