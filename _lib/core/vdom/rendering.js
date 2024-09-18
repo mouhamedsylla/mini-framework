@@ -1,73 +1,64 @@
-import { run, vdom } from "../runtime/runtime.js";
+export function updateDOM(oldVDOM, vdom, root) {
 
-let globalContext = null;
-let globalRoot = null;
-
-function setContext(context) {
-    globalContext = context;
-}
-
-function setRoot(root) {
-    globalRoot = root;
-}
-
-function render() {
-    const oldVDOM = vdom ? Object.assign({}, vdom) : null;
-
-    run(
-        globalContext,
-        globalContext.App(),
-    )
 
     const patches = diff(oldVDOM, vdom);
     console.log("patches: ", patches);
 
-    patch(globalRoot, patches);
+    patch(root, patches);
 }
 
 function patch(parent, patches, index = 0) {
 
+    console.log("parent in patch: ", parent);
     //console.log(`parent.childNodes (${index}): `, parent.childNodes);
     //console.log(`parent.childNodes[5]: `, parent.childNodes[5]);
-    if (!parent.childNodes[5]) { return }
     const $el = parent.childNodes[index];
-    if (!$el) { return }
+    if (!$el) {
+        parent.appendChild(createElement(patches.newNode));
+        return
+        // const $el = parent.childNodes[index];
+        // if (patches.children > 0) {
+        //     patches.children.forEach((child, i) => {
+        //         patch($el, child, i);
+        //     });
+        // }
+    }
 
-    console.log("patches.type: ", patches.type);
+    console.log("Patches ******: ", patches);
 
-    switch (patches.type) {
-        case 'REPLACE':
+    switch (patches?.type) {
+        case 'REPLAzdzedCE':
             const newEl = createElement(patches.newNode); // Crée un nouvel élément à partir du nouveau DOM virtuel
+            console.log("newEl: ", newEl);
             parent.replaceChild(newEl, $el);       // Remplace l'ancien élément
             break;
 
         case 'UPDATE':
-            // Mettre à jour les props
+            // Mettre à jour les 
+            console.log("patches.props-------: ", patches.props);
             patches.props.forEach(({ key, value }) => {
-                if ($el[key] !== value) {
+                if ($el[key] !== value && key !== 'on') {
+                    console.log("key: ", key);
+                    console.log("VALUE ********: ", value);
                     $el[key] = value; // Appliquer les nouvelles propriétés uniquement si elles ont changé
                 }
             });
 
             // Mettre à jour les enfants
+            console.log("patches.children: ", patches.children);
             for (let i = 0; i < patches.children.length; i++) {
+                console.log("CHILD PATCHS:", patches.children[i], $el); 
+                
                 patch($el, patches.children[i], i); // Patch récursif sur les enfants
             }
             break;
-        case 'START':
-            break
 
     }
 }
 
 function diff(oldVNode, newVNode) {
-    /* console.log("oldVNode: ", oldVNode);
-    console.log("newVNode: ", newVNode); */
-    if (oldVNode === null) {
-        return { type: 'START' }
-    }
 
-    if (oldVNode.tag !== newVNode.tag) {
+    if (oldVNode?.tag !== newVNode?.tag) {
         return { type: 'REPLACE', newNode: newVNode }; // Remplacer si les balises sont différentes
     }
 
@@ -95,8 +86,8 @@ function diff(oldVNode, newVNode) {
 }
 
 function createElement(vnode) {
-    if (typeof vnode === 'string' || typeof vnode === 'number') {
-        return document.createTextNode(vnode); // Créer un nœud de texte
+    if (vnode.type === 'text') {
+        return document.createTextNode(vnode.value); // Créer un nœud de texte
     }
 
     const el = document.createElement(vnode.tag);
@@ -117,6 +108,3 @@ function createElement(vnode) {
 
     return el;
 }
-
-
-export { render, setContext, setRoot, globalRoot }

@@ -12,6 +12,7 @@ export default class Compiler {
         const pattern = /<!--([^]*?(?=-->))-->|<(\/|!)?([a-z][a-z0-9-]*)\s*([^>]*?)(\/?)>/gi;
         let lastIndex = 0;
         let match = null;
+        this.vdom = null;
 
         let openedParents = [];
 
