@@ -77,7 +77,6 @@ export default class Compiler {
 
 
     getAttributes(attributes) {
-        console.log(attributes)
         const props = {};
         attributes = attributes.trim();
         if (!attributes) {

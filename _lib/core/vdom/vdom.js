@@ -50,6 +50,8 @@ export function createElementNode(vdom, parentEl) {
     parentEl !== toMount && parentEl.appendChild(toMount)
 }
 
+
+
 function removeTextNode(vdom) {
     const { el } = vdom
     if (!el) { return }

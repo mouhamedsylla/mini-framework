@@ -50,9 +50,7 @@ class Domino {
      * Connecte un composant au store et gère les changements d'état.
      */
     connectComponent(context, component, root) {
-        const updateUI = (newState) => {
-            console.log('updateUI')
-            console.log("this.INitcomponent: ", this.initialComponent)   
+        const updateUI = (newState) => {  
             this.run({ ...context, ...JSON.parse(JSON.stringify(newState)) }, this.initialComponent, root); // Met à jour l'UI avec le nouvel état
         };
 

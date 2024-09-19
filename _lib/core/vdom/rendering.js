@@ -1,41 +1,40 @@
 export function updateDOM(oldVDOM, vdom, root) {
-
-
-    const patches = diff(oldVDOM, vdom);
-    console.log("patches: ", patches);
+    const patches = diff(oldVDOM, vdom, root);
+    console.log("$$$$$$$$$$$$$$$$$$$$")
+    console.log("PATCHES: ", patches);
+    console.log("&&&&&&&&&&&&&&&&&&&&")
 
     patch(root, patches);
 }
 
 function patch(parent, patches, index = 0) {
 
-    console.log("parent in patch: ", parent);
-    //console.log(`parent.childNodes (${index}): `, parent.childNodes);
-    //console.log(`parent.childNodes[5]: `, parent.childNodes[5]);
-    const $el = parent.childNodes[index];
-    if (!$el) {
-        parent.appendChild(createElement(patches.newNode));
-        return
-        // const $el = parent.childNodes[index];
-        // if (patches.children > 0) {
-        //     patches.children.forEach((child, i) => {
-        //         patch($el, child, i);
-        //     });
-        // }
-    }
+    if (!patches) { return }
 
+    console.log("Calling patch on parent: ", parent, "with index:", index, "with parent.nodeType:", parent.nodeType);
+
+    console.log(`parent.childNodes: `, parent.childNodes);
+    console.log(`parent.childNodes.length: `, parent.childNodes.length);
     console.log("Patches ******: ", patches);
 
+    console.log(`parent.childNodes[${index}]: `, parent.childNodes[index]);
+
+
+
     switch (patches?.type) {
-        case 'REPLAzdzedCE':
+        case 'ADD':
             const newEl = createElement(patches.newNode); // Crée un nouvel élément à partir du nouveau DOM virtuel
-            console.log("newEl: ", newEl);
-            parent.replaceChild(newEl, $el);       // Remplace l'ancien élément
+            patches.parent.insertBefore(newEl, patches.parent.firstChild);
             break;
 
         case 'UPDATE':
             // Mettre à jour les 
-            console.log("patches.props-------: ", patches.props);
+            if (!parent.childNodes[index]) {
+                return
+            }
+
+            const $el = parent.childNodes[index];
+
             patches.props.forEach(({ key, value }) => {
                 if ($el[key] !== value && key !== 'on') {
                     console.log("key: ", key);
@@ -44,22 +43,25 @@ function patch(parent, patches, index = 0) {
                 }
             });
 
+            //console.log("patches.children", patches.children);
             // Mettre à jour les enfants
-            console.log("patches.children: ", patches.children);
-            for (let i = 0; i < patches.children.length; i++) {
-                console.log("CHILD PATCHS:", patches.children[i], $el); 
-                
-                patch($el, patches.children[i], i); // Patch récursif sur les enfants
-            }
-            break;
+            patches.children.forEach((childPatch, i) => {
+                patch($el, childPatch, i); // Patch récursif sur les enfants
+            });
 
+            break;
+        case 'PASS':
+            break
     }
 }
 
-function diff(oldVNode, newVNode) {
+function diff(oldVNode, newVNode, element, parentEl = null) {
+
+    console.log("newVNode: ", newVNode);
+
 
     if (oldVNode?.tag !== newVNode?.tag) {
-        return { type: 'REPLACE', newNode: newVNode }; // Remplacer si les balises sont différentes
+        return { type: 'ADD', parent: parentEl, element: element, newNode: newVNode }; // Remplacer si les balises sont différentes
     }
 
     if (newVNode.props === null || newVNode.props === undefined) { return }
@@ -75,19 +77,28 @@ function diff(oldVNode, newVNode) {
     const patchChildren = [];
     // Comparer les enfants
     for (let i = 0; i < newVNode.children.length; i++) {
-        patchChildren.push(diff(oldVNode.children[i], newVNode.children[i]));
+        const child = diff(oldVNode.children[i], newVNode.children[i], element.childNodes[i], element)
+        if (child !== undefined) {
+            patchChildren.push(child);
+        }
+    }
+
+    if (patchProps.length === 0 && patchChildren.length === 0) {
+        return { type: 'PASS', element: element, parent: parentEl };
     }
 
     return {
         type: 'UPDATE',
+        element: element,
         props: patchProps,
-        children: patchChildren
+        children: patchChildren,
+        parent: parentEl
     };
 }
 
 function createElement(vnode) {
     if (vnode.type === 'text') {
-        return document.createTextNode(vnode.value); // Créer un nœud de texte
+        return document.createTextNode(vnode.value);
     }
 
     const el = document.createElement(vnode.tag);

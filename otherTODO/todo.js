@@ -38,23 +38,50 @@ const context = {
     },
     handleChange: (e) => {
         context.setInput(e.target.value);
+        context.addTodo()
+        console.log("e.target.value************************************************: ", e.target.value)
+        e.target.value = ""
     },
     getText: (todo) => todo.text,
 };
 
 // Définir un composant
 const appComponent = `
-    <div>
-        <h1>To-Do List</h1>
-        <input type="text" value="{input}" onChange=handleChange />
-        <button onClick=addTodo>Add</button>
-        <ul>
-            {context.todos.map((todo) =>
-                "<li>" + "<span>" + getText(todo) + "</span>" + "</li>" 
-            ).join('')}
-        </ul>
-    </div>
+    <mini>
+        <section className="todoapp" id="root">
+            <header className="header" data-testid="header">
+                <h1>todos</h1>
+                <div className="input-container">
+                    <input 
+                        className="new-todo" 
+                        id="todo-input"
+                        onChange=handleChange
+                        type="text" 
+                        data-testid="text-input" 
+                        placeholder="What needs to be done?" 
+                        value="{input}"
+                    />
+
+                    <label className="visually-hidden" htmlFor="todo-input">New Todo Input</label>
+                </div>
+            </header>
+
+            <main class="main" data-testid="main">
+                <ul className="todo-list" data-testid="todo-list">
+                    {context.todos.map((todo) => 
+                        "<li class>" + "<span>" + getText(todo) + "</span>" + "</li>" 
+                    ).join('')}
+                </ul>
+            </main>
+        </section>
+
+        <footer className="info">
+            <p>Double-click to edit a todo</p>
+            <p>Created by the TodoMVC Team</p>
+            <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+        </footer>
+    </mini>
 `;
 
 // Connecter le composant au store et au DOM
-domino.connectComponent(context, appComponent, document.getElementById('app'));
+domino.connectComponent(context, appComponent, document.getElementById("app"));
