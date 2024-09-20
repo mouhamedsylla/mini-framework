@@ -1,30 +1,15 @@
 export function updateDOM(oldVDOM, vdom, root) {
-    const patches = diff(oldVDOM, vdom, root);
-    console.log("$$$$$$$$$$$$$$$$$$$$")
-    console.log("PATCHES: ", patches);
-    console.log("&&&&&&&&&&&&&&&&&&&&")
-
+    const patches = diff(oldVDOM, vdom, root, root);
     patch(root, patches);
 }
 
 function patch(parent, patches, index = 0) {
-
-    if (!patches) { return }
-
-    console.log("Calling patch on parent: ", parent, "with index:", index, "with parent.nodeType:", parent.nodeType);
-
-    console.log(`parent.childNodes: `, parent.childNodes);
-    console.log(`parent.childNodes.length: `, parent.childNodes.length);
-    console.log("Patches ******: ", patches);
-
-    console.log(`parent.childNodes[${index}]: `, parent.childNodes[index]);
-
-
+    if (!patches) { return; }
 
     switch (patches?.type) {
         case 'ADD':
             const newEl = createElement(patches.newNode); // Crée un nouvel élément à partir du nouveau DOM virtuel
-            patches.parent.insertBefore(newEl, patches.parent.firstChild);
+            patches.parent.appendChild(newEl);
             break;
 
         case 'REMOVE':
@@ -32,30 +17,34 @@ function patch(parent, patches, index = 0) {
             break;
 
         case 'UPDATE':
-            // Mettre à jour les 
             if (!parent.childNodes[index]) {
-                return
+                return;
             }
 
             const $el = parent.childNodes[index];
 
+            // Mettre à jour les propriétés
             patches.props.forEach(({ key, value }) => {
                 if ($el[key] !== value && key !== 'on') {
-                    console.log("key: ", key);
-                    console.log("VALUE ********: ", value);
                     $el[key] = value; // Appliquer les nouvelles propriétés uniquement si elles ont changé
                 }
             });
 
-            //console.log("patches.children", patches.children);
             // Mettre à jour les enfants
             patches.children.forEach((childPatch, i) => {
                 patch($el, childPatch, i); // Patch récursif sur les enfants
             });
-
             break;
+
+        case 'REMOVE':
+            // Suppression de l'enfant basé sur l'index
+            if (parent.childNodes[index]) {
+                parent.removeChild(parent.childNodes[index]); // Supprimer l'enfant à l'index donné
+            }
+            break;
+
         case 'PASS':
-            break
+            break;
     }
 }
 
@@ -70,7 +59,7 @@ function diff(oldVNode, newVNode, element, parentEl = null) {
         return { type: 'ADD', parent: parentEl, element: element, newNode: newVNode }; // Remplacer si les balises sont différentes
     }
 
-    if (newVNode.props === null || newVNode.props === undefined) { return }
+    if (newVNode.props === null || newVNode.props === undefined) { return; }
 
     const patchProps = [];
     // Comparer les props (attributs)
@@ -108,6 +97,7 @@ function createElement(vnode) {
     }
 
     const el = document.createElement(vnode.tag);
+
     // Appliquer les props
     if (vnode.props) {
         Object.keys(vnode.props).forEach(key => {
@@ -115,7 +105,7 @@ function createElement(vnode) {
         });
     }
 
-    if (!vnode.children) { return el }
+    if (!vnode.children) { return el; }
 
     // Ajouter les enfants
     vnode.children.forEach(child => {

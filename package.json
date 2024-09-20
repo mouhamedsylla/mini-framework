@@ -6,7 +6,7 @@
     },
     "type": "module",
     "scripts": {
-        "start": "node ./_lib/core/runtime/runtime.js"
+        "start": "node server.js"
     },
     "dependencies": {},
     "devDependencies": {}
