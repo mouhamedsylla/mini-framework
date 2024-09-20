@@ -27,6 +27,10 @@ function patch(parent, patches, index = 0) {
             patches.parent.insertBefore(newEl, patches.parent.firstChild);
             break;
 
+        case 'REMOVE':
+            patches.element.remove();
+            break;
+
         case 'UPDATE':
             // Mettre à jour les 
             if (!parent.childNodes[index]) {
@@ -58,7 +62,9 @@ function patch(parent, patches, index = 0) {
 function diff(oldVNode, newVNode, element, parentEl = null) {
 
     console.log("newVNode: ", newVNode);
-
+    if (!newVNode) {
+        return { type: 'REMOVE', element: element }; // Si le nouveau VNode est absent, on le supprime
+    }
 
     if (oldVNode?.tag !== newVNode?.tag) {
         return { type: 'ADD', parent: parentEl, element: element, newNode: newVNode }; // Remplacer si les balises sont différentes
@@ -75,8 +81,8 @@ function diff(oldVNode, newVNode, element, parentEl = null) {
     });
 
     const patchChildren = [];
-    // Comparer les enfants
-    for (let i = 0; i < newVNode.children.length; i++) {
+    const maxChildrenLength = Math.max(oldVNode.children.length, newVNode.children.length);
+    for (let i = 0; i < maxChildrenLength; i++) {
         const child = diff(oldVNode.children[i], newVNode.children[i], element.childNodes[i], element)
         if (child !== undefined) {
             patchChildren.push(child);
