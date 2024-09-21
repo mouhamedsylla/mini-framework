@@ -35,6 +35,19 @@ const app = () => {
             payload: { index: +e.target.dataset.id, isCompleted: e.target.checked } 
             });
         },
+        makeEditable: (e) => {
+            e.target.contentEditable = true;
+            e.target.focus();
+            e.target.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    e.target.contentEditable = false;
+                    store.dispatch({ 
+                        type: "EDIT_TODO", 
+                        payload: { index: +e.target.previousElementSibling.dataset.id, task: e.target.innerText } 
+                    });
+                }
+            });
+        }
     }
     return context;
 }

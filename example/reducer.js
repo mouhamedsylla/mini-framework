@@ -30,6 +30,12 @@ const reducer = (state, action) => {
                 todoCount: state.Todos.filter(todo => !todo.isCompleted).length  + (action.payload.isCompleted ? -1 : 1)
             };
 
+        case "EDIT_TODO":
+            return { 
+                ...state, 
+                Todos: state.Todos.map(todo => todo.index === action.payload.index ? { ...todo, task: action.payload.task } : todo)
+            };
+
         case "CLEAR_COMPLETED":
             return { ...state, Todos: state.Todos.filter(todo => !todo.isCompleted) };
         default:

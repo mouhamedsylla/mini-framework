@@ -14,7 +14,7 @@ const todoItem = (payload) => {
                     checked="${context.isCompleted ? "true" : ""}"
                     data-id="${context.index}" 
                 />
-                <label data-testid="todo-item-label">${context.task}</label>
+                <label ondblclick=makeEditable data-testid="todo-item-label">${context.task}</label>
                 <button onClick=handleRemove className="destroy" data-id="${context.index}"></button>
             </div>
         </li>
