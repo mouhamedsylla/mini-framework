@@ -30,7 +30,7 @@ const app = () => {
         ...main(),
         ...footer(),
         handleRemove: (e) => {
-            store.dispatch({ type: "REMOVE_TODO", payload: { index: e.target.dataset.id } });
+            store.dispatch({ type: "REMOVE_TODO", payload: { index: +e.target.dataset.id } });
         }
     }
     return context;

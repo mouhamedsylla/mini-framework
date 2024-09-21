@@ -65,14 +65,16 @@ export function areNodeEqual(node1, node2) {
 
 
 export function objectDiff(oldObj, newObj) {
-    const oldKeys = Object.keys(oldObj)
-    const newKeys = Object.keys(newObj)
+  const oldKeys = Object.keys(oldObj)
+  const newKeys = Object.keys(newObj)
 
-    return {
-        added: newKeys.filter(key => !oldKeys.includes(key)),
-        removed: oldKeys.filter(key => !newKeys.includes(key)),
-        updated: oldKeys.filter(key => (key in newKeys) && newObj[key] !== oldObj[key]),
-    }
+  return {
+    added: newKeys.filter((key) => !(key in oldObj)),
+    removed: oldKeys.filter((key) => !(key in newObj)),
+    updated: newKeys.filter(
+      (key) => key in oldObj && oldObj[key] !== newObj[key]
+    ),
+  }
 }
 
 export function toClassList(classes = '') {
@@ -99,8 +101,6 @@ export function arraysDiffSequence(
     for (let index = 0; index < newArray.length; index++) {
       if (array.isRemoval(index, newArray)) {
         sequence.push(array.removeItem(index))
-        // Removals shouldn't advance the index. Removing the item shifts the
-        // remaining items to the left, so the next item is now at the same index.
         index--
         continue
       }

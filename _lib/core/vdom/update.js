@@ -67,6 +67,7 @@ function updateStyles(el, oldStyle = {}, newStyle = {}) {
 function updateAttributes(el, oldAttrs, newAttrs) {
     const { added, removed, updated } = objectDiff(oldAttrs, newAttrs)
 
+
     added.forEach(attr => setAttribute(el, attr, newAttrs[attr]))
     removed.forEach(attr => removeAttribute(el, attr))
     updated.forEach(attr => setAttribute(el, attr, newAttrs[attr]))

@@ -7,7 +7,7 @@ const todoItem = (payload) => {
     const component = `
         <li className="${context.isCompleted ? "completed" : ""}" data-testid="todo-item">
             <div className="view">
-                <input className="toggle" type="checkbox" data-testid="todo-item-toggle" />
+                <input className="toggle" type="checkbox" data-testid="todo-item-toggle" checked="${context.isCompleted ? "true" : ""}" />
                 <label data-testid="todo-item-label">${context.task}</label>
                 <button onClick=handleRemove className="destroy" data-id="${context.index}"></button>
             </div>

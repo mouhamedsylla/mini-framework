@@ -27,10 +27,6 @@ const header = () => {
             context.index ++
             e.target.value = "";
         },
-        input: "",
-        setInput: (input) => {
-            context.input = input;
-        }
     }
     return context;
 };

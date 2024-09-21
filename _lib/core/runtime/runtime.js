@@ -82,11 +82,7 @@ class Domino {
 
         if (!this.initialComponent) {
             this.initialComponent = component;
-            console.log('this.initialComponent', this.initialComponent)
         } 
-        console.log('run')
-        console.log('context: ', context)
-        console.log('component: ', component)
         // Évaluation du code du composant avec le contexte
         const evaluatedCode = EvalJS(component, context);
         this.compiler.setCode(evaluatedCode);
@@ -95,9 +91,6 @@ class Domino {
 
         // Mise à jour du DOM réel à partir du VDOM
         if (this.oldVDOM) {
-            console.log('updateDOM')
-            console.log('this.oldVDOM', this.oldVDOM)
-            console.log('this.vdom', this.vdom)
             updateDOM(this.oldVDOM, this.vdom, root); // Mise à jour si l'ancien VDOM existe
         } else {
             mountDOM(this.vdom, root, null); // Premier montage
@@ -112,8 +105,6 @@ class Domino {
      */
     connectComponent(context, component, root) {
         const updateUI = (newState) => {
-            console.log('updateUI')
-            console.log("this.INitcomponent: ", this.initialComponent)   
             this.run({ ...context, ...JSON.parse(JSON.stringify(newState)) }, this.initialComponent, root); // Met à jour l'UI avec le nouvel état
         };
 

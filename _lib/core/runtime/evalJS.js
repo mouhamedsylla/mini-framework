@@ -60,7 +60,6 @@ export function EvalJS(code, context) {
     //code = encodeHTML(code);
 
     while ((matches = nestedBracesRegex.exec(code)) !== null) {
-        console.log("matches: ", matches[1])
         matchedJS.push(matches[1]);
     }
 

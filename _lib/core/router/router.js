@@ -26,14 +26,9 @@ class Router {
      * @param {boolean} pushState - Si vrai, on ajoute la route à l'historique
      */
     navigate(path, pushState = true) {
-        console.log("path: ", path)
         const route = this.routes[path];  // Obtenir le composant correspondant à la route
-        console.log(this.routes)
-        //console.log(route.context)
-        console.log(route.component)
 
         if (route) {
-            console.log("On y est")
             if (pushState && this.currentPath !== path) {
                 window.history.pushState({}, "", path)
                 this.currentPath = path
@@ -41,8 +36,7 @@ class Router {
 
             this.domino.connectComponent(route.context, route.component, this.root, path)
         } else {
-            console.log("path: ", path)
-            //this.handleRouteNotFound(path);
+            this.handleRouteNotFound(path);
         }
     }
 
