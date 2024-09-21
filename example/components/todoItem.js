@@ -1,19 +1,19 @@
-const todoItem = (task) => {
+const todoItem = (payload) => {
+    const context = {
+        TodoItem: () => component,
+        ...payload,
+    }
+
     const component = `
-        <li className="{isCompleted ? "completed" : ''}" data-testid="todo-item">
+        <li className="${context.isCompleted ? "completed" : ""}" data-testid="todo-item">
             <div className="view">
                 <input className="toggle" type="checkbox" data-testid="todo-item-toggle" />
-                <label data-testid="todo-item-label">{task}</label>
-                <button className="destroy" data-testid="todo-item-button"></button>
+                <label data-testid="todo-item-label">${context.task}</label>
+                <button onClick=handleRemove className="destroy" data-id="${context.index}"></button>
             </div>
         </li>
     `
 
-    const context = {
-        TodoItem: () => component,
-        task: task,
-        isCompleted: false
-    }
     return context;
 }
 

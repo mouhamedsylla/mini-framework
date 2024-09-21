@@ -3,7 +3,6 @@ import { hString } from './vdom.js'
 export const DOM_TYPES = {
     TEXT: 'text',
     ELEMENT: 'element',
-    JS: 'js',
 }
 
 
@@ -21,92 +20,324 @@ export function mapTextNodes(children) {
     })
 }
 
-// ATTRIBUTES
-
-export function setAttributes(el, attrs) {
-    const {className, style, ...rest} = attrs
-
-    for (const [name, value] of Object.entries(rest)) {
-        setAttribute(el, name, value)
-    }
-
-    if (className) {
-        setClass(el, className)
-    }
-
-    if (style) {
-        Object.entries(style).forEach(([name, value]) => {
-            setStyle(el, name, value)
-        })
-    }
-}
-
-
-export function setAttribute(el, name, value) {
-    if (value == null) {
-        removeAttribute(el, name)
-    } else if (name.startsWith('data-')) {
-        el.setAttribute(name, value)
-    } else {
-        el[name] = value
-    }
-}
-
-export function removeAttribute(el, name) {
-    el[name] = null
-    el.removeAttribute(name)
-}
-
-// CLASS
-
-function setClass(el, className) {
-    el.className =''
-
-    if (typeof className === 'string') {
-        el.className = className
-    }
-
-    if (Array.isArray(className)) {
-        el.className = className.join(' ')
-    }
-}
-
-
-// STYLE
-export function setStyle(el, name, value) {
-    el.style[name] = value
-}
-
-
-// EVENTS
-export function extractPropsAndEvents(vdom) {
-    const { on: events = {}, ...props } = vdom.props
-    delete props.key
-  
-    return { props, events }
+export function extractChildren(vdom) {
+  if (vdom.children == null) {
+    return []
   }
 
-export function addEventListeners(listeners = {}, el) {
-    const addedListeners = {}
+  const children = []
 
-    Object.entries(listeners).forEach(([eventName, handler]) => {
-      const listener = addEventListener(eventName, handler, el)
-      addedListeners[eventName] = listener
-    })
-  
-    return addedListeners
-}
-
-export function addEventListener(eventName, handler, el) {
-    function boundHandler() {
-        handler(...arguments)
+  for (const child of vdom.children) {
+    if (child.type === DOM_TYPES.FRAGMENT) {
+      children.push(...extractChildren(child, children))
+    } else {
+      children.push(child)
     }
-    el.addEventListener(eventName, boundHandler)
-    return boundHandler
+  }
+
+  return children
 }
 
-export function removeEventListeners(listeners = {}, el) {
-    Object.entries(listeners).forEach(([eventName, handler]) => {
-      el.removeEventListener(eventName, handler)
-    })
+function isNotEmptyString(str) {
+    return str !== ''
+}
+  
+function isNotBlankOrEmptyString(str) {
+    return isNotEmptyString(str.trim())
+}
+
+export function arraysDiff(oldArray, newArray) {
+    return {
+      added: newArray.filter((newItem) => !oldArray.includes(newItem)),
+      removed: oldArray.filter((oldItem) => !newArray.includes(oldItem)),
+    }
+  }
+  
+
+export function areNodeEqual(node1, node2) {
+    if (node1.type !== node2.type) {
+        return false
+    }
+    const { tag: tag1, props: { key: key1 } = {} } = node1
+    const { tag: tag2, props: { key: key2 } = {} } = node2
+    return tag1 === tag2 && key1 === key2
+}
+
+
+export function objectDiff(oldObj, newObj) {
+    const oldKeys = Object.keys(oldObj)
+    const newKeys = Object.keys(newObj)
+
+    return {
+        added: newKeys.filter(key => !oldKeys.includes(key)),
+        removed: oldKeys.filter(key => !newKeys.includes(key)),
+        updated: oldKeys.filter(key => (key in newKeys) && newObj[key] !== oldObj[key]),
+    }
+}
+
+export function toClassList(classes = '') {
+    return Array.isArray(classes)
+      ? classes.filter(isNotBlankOrEmptyString)
+      : classes.split(/(\s+)/).filter(isNotBlankOrEmptyString)
+}
+
+export const ARRAY_DIFF_OP = {
+    ADD: 'add',
+    REMOVE: 'remove',
+    MOVE: 'move',
+    NOOP: 'noop',
+  }
+
+export function arraysDiffSequence(
+    oldArray,
+    newArray,
+    equalsFn = (a, b) => a === b
+  ) {
+    const sequence = []
+    const array = new ArrayWithOriginalIndices(oldArray, equalsFn)
+  
+    for (let index = 0; index < newArray.length; index++) {
+      if (array.isRemoval(index, newArray)) {
+        sequence.push(array.removeItem(index))
+        // Removals shouldn't advance the index. Removing the item shifts the
+        // remaining items to the left, so the next item is now at the same index.
+        index--
+        continue
+      }
+  
+      if (array.isNoop(index, newArray)) {
+        sequence.push(array.noopItem(index))
+        continue
+      }
+  
+      const item = newArray[index]
+  
+      if (array.isAddition(item, index)) {
+        sequence.push(array.addItem(item, index))
+        continue
+      }
+  
+      sequence.push(array.moveItem(item, index))
+    }
+  
+    sequence.push(...array.removeItemsAfter(newArray.length))
+  
+    return sequence
+  }
+
+  class ArrayWithOriginalIndices {
+    /** @type {any[]} */
+    #array = []
+    /** @type {number[]} */
+    #originalIndices = []
+    /** @type {(a: any, b: any) => boolean} */
+    #equalsFn
+  
+    /**
+     * @param {any[]} array the array to wrap
+     * @param {(a: any, b: any) => boolean} equalsFn the function to use to compare two items
+     * @returns {ArrayWithOriginalIndices}
+     */
+    constructor(array, equalsFn) {
+      this.#array = [...array]
+      this.#originalIndices = array.map((_, i) => i)
+      this.#equalsFn = equalsFn
+    }
+  
+    /**
+     * The length of the array at its current state.
+     *
+     * @type {number}
+     */
+    get length() {
+      return this.#array.length
+    }
+  
+    /**
+     * Returns the original index of the item at the given index.
+     * If the item was added, it returns -1.
+     *
+     * @param {number} index the index of the item to check
+     * @returns {number} the original index of the item at the given index
+     */
+    originalIndexAt(index) {
+      return this.#originalIndices[index]
+    }
+  
+    /**
+     * Returns the index of the item in the array, searched starting from the
+     * given index.
+     * If the item isn't found, it returns -1.
+     *
+     * @param {any} item the item to look for
+     * @param {number} fromIndex the index to start looking from (inclusive)
+     * @returns {number} the index of the item in the array, or -1 if not found
+     */
+    findIndexFrom(item, fromIndex) {
+      for (let i = fromIndex; i < this.length; i++) {
+        if (this.#equalsFn(item, this.#array[i])) {
+          return i
+        }
+      }
+  
+      return -1
+    }
+  
+    /**
+     * Checks if the item at the given index in this array doesn't appear in the
+     * passed in `newArray`. This means the item was removed from this array with
+     * respect to the `newArray`.
+     *
+     * @param {number} index the index of the item in this array
+     * @param {any[]} newArray the new array to compare against
+     * @returns {boolean} whether the item at the given index is a removal
+     */
+    isRemoval(index, newArray) {
+      // If the index is beyond the length of the array, it can't be a removal.
+      if (index >= this.length) {
+        return false
+      }
+  
+      const item = this.#array[index]
+      const indexInNewArray = newArray.findIndex((newItem) =>
+        this.#equalsFn(item, newItem)
+      )
+  
+      return indexInNewArray === -1
+    }
+  
+    /**
+     * Removes the item at the given index from the array and returns the removal
+     * operation.
+     *
+     * @param {number} index the index of the item to remove in this array
+     * @returns {ArraysDiffSequenceOp} removal operation
+     */
+    removeItem(index) {
+      const operation = {
+        op: ARRAY_DIFF_OP.REMOVE,
+        index,
+        item: this.#array[index],
+      }
+  
+      this.#array.splice(index, 1)
+      this.#originalIndices.splice(index, 1)
+  
+      return operation
+    }
+  
+    /**
+     * Checks if the item at the given index in this array is a noop with respect to
+     * the given passed in `newArray`. A noop operation happens when the item at the
+     * given index is the same in both arrays.
+     *
+     * @param {number} index the index of the item in this array
+     * @param {any[]} newArray the new array to compare against
+     * @returns {boolean} whether the item at the given index is a noop
+     */
+    isNoop(index, newArray) {
+      // If the index is beyond the length of the array, it can't be a noop.
+      if (index >= this.length) {
+        return false
+      }
+  
+      const item = this.#array[index]
+      const newItem = newArray[index]
+  
+      return this.#equalsFn(item, newItem)
+    }
+  
+    /**
+     * Returns a noop operation for the item at the given index.
+     * The `from` index is the original index of the item.
+     *
+     * @param {number} index the index in this array
+     * @returns {ArraysDiffSequenceOp} noop operation
+     */
+    noopItem(index) {
+      return {
+        op: ARRAY_DIFF_OP.NOOP,
+        index,
+        originalIndex: this.originalIndexAt(index),
+        item: this.#array[index],
+      }
+    }
+  
+    /**
+     * Checks if the item is an addition. An addition happens when the item is
+     * not found in the array, starting from the given index (inclusive).
+     *
+     * @param {any} item the item to check
+     * @param {number} fromIdx the index to start looking from (inclusive)
+     * @returns {boolean} whether the item is an addition
+     */
+    isAddition(item, fromIdx) {
+      return this.findIndexFrom(item, fromIdx) === -1
+    }
+  
+    /**
+     * Adds the item at the given index to the array and returns the addition
+     * operation.
+     *
+     * @param {any} item the item to be added in this array
+     * @param {number} index the index to add the item at
+     * @returns {ArraysDiffSequenceOp} addition operation
+     */
+    addItem(item, index) {
+      const operation = {
+        op: ARRAY_DIFF_OP.ADD,
+        index,
+        item,
+      }
+  
+      this.#array.splice(index, 0, item)
+      this.#originalIndices.splice(index, 0, -1)
+  
+      return operation
+    }
+  
+    /**
+     * Moves the passed in item to the given index and returns the move operation.
+     * The item is searched in this array starting from the given index (inclusive).
+     * This means that the items are always moved from right to left (conventionally).
+     *
+     * @param {any} item the item to move
+     * @param {number} toIndex the index to move the item to
+     * @returns {ArraysDiffSequenceOp} move operation
+     */
+    moveItem(item, toIndex) {
+      const fromIndex = this.findIndexFrom(item, toIndex)
+  
+      const operation = {
+        op: ARRAY_DIFF_OP.MOVE,
+        originalIndex: this.originalIndexAt(fromIndex),
+        from: fromIndex,
+        index: toIndex,
+        item: this.#array[fromIndex],
+      }
+  
+      const [_item] = this.#array.splice(fromIndex, 1)
+      this.#array.splice(toIndex, 0, _item)
+  
+      const [originalIndex] = this.#originalIndices.splice(fromIndex, 1)
+      this.#originalIndices.splice(toIndex, 0, originalIndex)
+  
+      return operation
+    }
+  
+    /**
+     * Removes all items after the given index and returns the removal operations.
+     *
+     * @param {number} index the index to start removing items from
+     * @returns {ArraysDiffSequenceOp[]} the removal operations
+     */
+    removeItemsAfter(index) {
+      const operations = []
+  
+      while (this.length > index) {
+        operations.push(this.removeItem(index))
+      }
+  
+      return operations
+    }
   }

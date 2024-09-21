@@ -12,9 +12,9 @@ const app = () => {
     const component = `
         <mini> 
             <section className="todoapp" id="root">
-                { Header() }
-                { Main() }
-                { Footer() }
+                <Header />
+                <Main />
+                <Footer />
             </section>
             <footer className="info">
                 <p>Double-click to edit a todo</p>
@@ -28,7 +28,10 @@ const app = () => {
         App: () => component,
         ...header(),
         ...main(),
-        ...footer()
+        ...footer(),
+        handleRemove: (e) => {
+            store.dispatch({ type: "REMOVE_TODO", payload: { index: e.target.dataset.id } });
+        }
     }
     return context;
 }
@@ -43,6 +46,8 @@ const route = {
     "/": {context: appContext, component: appComponent},
 }
 
-const router = new Router(domino, route, root);
-router.navigate("/");
+new Router(domino, route, root);
+
+export default store;
+
 

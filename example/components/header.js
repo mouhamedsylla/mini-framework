@@ -1,3 +1,5 @@
+import store from "../app.js";
+
 const header = () => {
   const component = `
             <header className="header" data-testid="header">
@@ -19,10 +21,11 @@ const header = () => {
 
     const context = {
         Header: () => component,
+        index: 0,
         handleChange: (e) => {
-            console.log("e.target.value: ", e.target.value)
-            //e.target.value && context.setInput(e.target.value);
-            //store.dispatch({ type: "ADD_TODO", payload: { text: e.target.value, completed: false } })
+            store.dispatch({ type: "ADD_TODO", payload: { task: e.target.value, isCompleted: false, index: context.index } })
+            context.index ++
+            e.target.value = "";
         },
         input: "",
         setInput: (input) => {
