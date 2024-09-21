@@ -1,4 +1,4 @@
-import { DOM_TYPES, mapTextNodes } from './helper.js'
+import { DOM_TYPES, mapTextNodes, assert } from './helper.js'
 import { addEventListeners, removeEventListeners, extractPropsAndEvents } from './events.js'
 import { setAttributes } from './attributes.js'
 
@@ -41,6 +41,7 @@ export function createElementNode(vdom, parentEl) {
         toMount = parentEl
     }
 
+    console.log("parentEl", parentEl)
     children.forEach(child => mountDOM(child, toMount))
     parentEl !== toMount && parentEl.appendChild(toMount)
 }
@@ -51,15 +52,36 @@ function removeTextNode(vdom) {
 }
 
 function removeElementNode(vdom) {
+    if (vdom.tag === "mini") {
+        miniDestroy(vdom)
+        return
+    }
     const { el, children, listeners } = vdom
-    children.forEach(unmountDOM)
+  
+    assert(el instanceof HTMLElement)
+  
     el.remove()
+    children.forEach(unmountDOM)
+  
+    if (listeners) {
+      removeEventListeners(listeners, el)
+      delete vdom.listeners
+    }
+  }
+
+function miniDestroy(vdom) {
+    const { listeners } = vdom
+  
+    if (vdom.children) {
+        vdom.children.forEach(unmountDOM)
+    }
 
     if (listeners) {
-        removeEventListeners(listeners, el)
-        delete vdom.listeners
+      removeEventListeners(listeners, vdom.el)
+      delete vdom.listeners
     }
 }
+
 
 function addProps(el, vdom) {
     const { props: attrs, events } = extractPropsAndEvents(vdom)

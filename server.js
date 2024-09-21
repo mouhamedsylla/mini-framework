@@ -39,7 +39,7 @@ const server = http.createServer((req, res) => {
     fs.readFile(fullPath, (err, data) => {
       if (err) {
         // Si le fichier n'existe pas, servir index.html (pour une route SPA)
-        const indexPath = path.join(__dirname, 'otherTODO/index.html');
+        const indexPath = path.join(__dirname, 'example/index.html');
         fs.readFile(indexPath, (errIndex, indexData) => {
           if (errIndex) {
             res.writeHead(404, { 'Content-Type': 'text/plain' });

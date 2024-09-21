@@ -83,6 +83,12 @@ export function toClassList(classes = '') {
       : classes.split(/(\s+)/).filter(isNotBlankOrEmptyString)
 }
 
+export function assert(condition, message = 'Assertion failed') {
+  if (!condition) {
+    throw new Error(message)
+  }
+}
+
 export const ARRAY_DIFF_OP = {
     ADD: 'add',
     REMOVE: 'remove',
@@ -126,53 +132,28 @@ export function arraysDiffSequence(
   }
 
   class ArrayWithOriginalIndices {
-    /** @type {any[]} */
     #array = []
-    /** @type {number[]} */
     #originalIndices = []
-    /** @type {(a: any, b: any) => boolean} */
     #equalsFn
   
-    /**
-     * @param {any[]} array the array to wrap
-     * @param {(a: any, b: any) => boolean} equalsFn the function to use to compare two items
-     * @returns {ArrayWithOriginalIndices}
-     */
+ 
     constructor(array, equalsFn) {
       this.#array = [...array]
       this.#originalIndices = array.map((_, i) => i)
       this.#equalsFn = equalsFn
     }
   
-    /**
-     * The length of the array at its current state.
-     *
-     * @type {number}
-     */
+
     get length() {
       return this.#array.length
     }
   
-    /**
-     * Returns the original index of the item at the given index.
-     * If the item was added, it returns -1.
-     *
-     * @param {number} index the index of the item to check
-     * @returns {number} the original index of the item at the given index
-     */
+
     originalIndexAt(index) {
       return this.#originalIndices[index]
     }
   
-    /**
-     * Returns the index of the item in the array, searched starting from the
-     * given index.
-     * If the item isn't found, it returns -1.
-     *
-     * @param {any} item the item to look for
-     * @param {number} fromIndex the index to start looking from (inclusive)
-     * @returns {number} the index of the item in the array, or -1 if not found
-     */
+
     findIndexFrom(item, fromIndex) {
       for (let i = fromIndex; i < this.length; i++) {
         if (this.#equalsFn(item, this.#array[i])) {
@@ -182,16 +163,7 @@ export function arraysDiffSequence(
   
       return -1
     }
-  
-    /**
-     * Checks if the item at the given index in this array doesn't appear in the
-     * passed in `newArray`. This means the item was removed from this array with
-     * respect to the `newArray`.
-     *
-     * @param {number} index the index of the item in this array
-     * @param {any[]} newArray the new array to compare against
-     * @returns {boolean} whether the item at the given index is a removal
-     */
+
     isRemoval(index, newArray) {
       // If the index is beyond the length of the array, it can't be a removal.
       if (index >= this.length) {
@@ -206,13 +178,6 @@ export function arraysDiffSequence(
       return indexInNewArray === -1
     }
   
-    /**
-     * Removes the item at the given index from the array and returns the removal
-     * operation.
-     *
-     * @param {number} index the index of the item to remove in this array
-     * @returns {ArraysDiffSequenceOp} removal operation
-     */
     removeItem(index) {
       const operation = {
         op: ARRAY_DIFF_OP.REMOVE,
@@ -225,16 +190,7 @@ export function arraysDiffSequence(
   
       return operation
     }
-  
-    /**
-     * Checks if the item at the given index in this array is a noop with respect to
-     * the given passed in `newArray`. A noop operation happens when the item at the
-     * given index is the same in both arrays.
-     *
-     * @param {number} index the index of the item in this array
-     * @param {any[]} newArray the new array to compare against
-     * @returns {boolean} whether the item at the given index is a noop
-     */
+
     isNoop(index, newArray) {
       // If the index is beyond the length of the array, it can't be a noop.
       if (index >= this.length) {
@@ -247,13 +203,6 @@ export function arraysDiffSequence(
       return this.#equalsFn(item, newItem)
     }
   
-    /**
-     * Returns a noop operation for the item at the given index.
-     * The `from` index is the original index of the item.
-     *
-     * @param {number} index the index in this array
-     * @returns {ArraysDiffSequenceOp} noop operation
-     */
     noopItem(index) {
       return {
         op: ARRAY_DIFF_OP.NOOP,
@@ -263,26 +212,11 @@ export function arraysDiffSequence(
       }
     }
   
-    /**
-     * Checks if the item is an addition. An addition happens when the item is
-     * not found in the array, starting from the given index (inclusive).
-     *
-     * @param {any} item the item to check
-     * @param {number} fromIdx the index to start looking from (inclusive)
-     * @returns {boolean} whether the item is an addition
-     */
+
     isAddition(item, fromIdx) {
       return this.findIndexFrom(item, fromIdx) === -1
     }
-  
-    /**
-     * Adds the item at the given index to the array and returns the addition
-     * operation.
-     *
-     * @param {any} item the item to be added in this array
-     * @param {number} index the index to add the item at
-     * @returns {ArraysDiffSequenceOp} addition operation
-     */
+
     addItem(item, index) {
       const operation = {
         op: ARRAY_DIFF_OP.ADD,
@@ -296,15 +230,6 @@ export function arraysDiffSequence(
       return operation
     }
   
-    /**
-     * Moves the passed in item to the given index and returns the move operation.
-     * The item is searched in this array starting from the given index (inclusive).
-     * This means that the items are always moved from right to left (conventionally).
-     *
-     * @param {any} item the item to move
-     * @param {number} toIndex the index to move the item to
-     * @returns {ArraysDiffSequenceOp} move operation
-     */
     moveItem(item, toIndex) {
       const fromIndex = this.findIndexFrom(item, toIndex)
   
@@ -325,12 +250,7 @@ export function arraysDiffSequence(
       return operation
     }
   
-    /**
-     * Removes all items after the given index and returns the removal operations.
-     *
-     * @param {number} index the index to start removing items from
-     * @returns {ArraysDiffSequenceOp[]} the removal operations
-     */
+
     removeItemsAfter(index) {
       const operations = []
   

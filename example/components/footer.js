@@ -39,4 +39,6 @@ const footerBloc =  () => {
     return context;
 }
 
+
+
 export default footer;

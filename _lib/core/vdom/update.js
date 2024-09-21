@@ -4,6 +4,8 @@ import { mountDOM, unmountDOM } from "./vdom.js"
 
 export function updateDOM(oldvDom, newvDom, parentEl) {
     if (!areNodeEqual(oldvDom, newvDom)) {
+        console.log('unmounting oldvDom')
+        console.log("vdom are not equal")
         unmountDOM(oldvDom)
         mountDOM(newvDom, parentEl)
         return

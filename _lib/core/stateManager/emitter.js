@@ -7,7 +7,6 @@ export default class EventEmitter {
         if (!this.events.hasOwnProperty(event)) {
             this.events[event] = []
         }
-        console.log("subscribing to event", event)
         this.events[event].push(callback)
     }
 
@@ -16,8 +15,6 @@ export default class EventEmitter {
             return []
         }
 
-        console.log("publishing event", event)
-        console.log("publishing event", event)
         return this.events[event].map(callback => callback(data))
     }
 }

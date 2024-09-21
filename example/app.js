@@ -29,13 +29,11 @@ const app = () => {
         ...header(),
         ...main(),
         ...footer(),
-        handleRemove: (e) => {
-            store.dispatch({ type: "REMOVE_TODO", payload: { index: +e.target.dataset.id } });
-        },
-        handleCheckClick: (e) => {
-           console.log(e.target.checked)
-           console.log(e.target.dataset.id)
-           store.dispatch({ type: "TOGGLE_TODO", payload: { index: +e.target.dataset.id, isCompleted: e.target.checked } });
+        handleRemove: (e) => { store.dispatch({ type: "REMOVE_TODO", payload: { index: +e.target.dataset.id } })},
+        handleCheckClick: (e) => { store.dispatch({ 
+            type: "TOGGLE_TODO", 
+            payload: { index: +e.target.dataset.id, isCompleted: e.target.checked } 
+            });
         },
     }
     return context;
@@ -48,7 +46,7 @@ const appContext = app();
 const appComponent = appContext.App();
 const root = document.body;
 const route = {
-    "/": {context: appContext, component: appComponent},
+    "/todo": {context: appContext, component: appComponent},
 }
 
 new Router(domino, route, root);
