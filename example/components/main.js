@@ -6,10 +6,14 @@ const main = () => {
     const context = {
         Main: () => component,
         Todos: [],
+        Active_Todos: [],
+        Completed_Todos: [],
+        Active_Filter: "all",
         createItem: (todo) => todoItem(todo).TodoItem(),
         ...markCompleted(),
         seeMarkCompleted: false,
     }
+
     const component = `
             <main className="main">
                 <div className="toggle-all-container">
