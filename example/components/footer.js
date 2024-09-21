@@ -18,13 +18,13 @@ const footerBloc =  () => {
                 <span className="todo-count">{todoCount === 1 ? todoCount + " item left!" : todoCount + " items left!"}</span>
                 <ul className="filters">
                     <li>
-                        <a href="#/" className="selected">All</a>
+                        <a href="#/" className="{Active_Filter == "all" ? "selected" : ""}" onClick="handleFilterAll">All</a>
                     </li>
                     <li>
-                        <a href="#/active" data-link>Active</a>
+                        <a href="#/active" className="{Active_Filter == "active" ? "selected" : ""}" onClick="handleFilterActive">Active</a>
                     </li>
                     <li>
-                        <a href="#/completed" data-link>Completed</a>
+                        <a href="#/completed" className="{Active_Filter == "completed" ? "selected" : ""}" onClick="handleFilterCompleted">Completed</a>
                     </li>
                 </ul>
                 <button className="clear-completed" onClick="handleClearCompleted">Clear completed</button>
@@ -32,10 +32,21 @@ const footerBloc =  () => {
     `
     const context = {
         footerBloc: () => component,
+        handleFilterAll: () => {
+            console.log("store.state: ", store.state);
+            store.dispatch({ type: "FILTER_ALL" });
+        },
+        handleFilterActive: () => {
+            store.dispatch({ type: "FILTER_ACTIVE" });
+        },
+        handleFilterCompleted: () => {
+            store.dispatch({ type: "FILTER_COMPLETED" });
+        },
         handleClearCompleted: () => {
             store.dispatch({ type: "CLEAR_COMPLETED" });
         },
         todoCount: 1,
+        Active_Filter: "all",
     }
     return context;
 }

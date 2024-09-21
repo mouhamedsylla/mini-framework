@@ -29,10 +29,11 @@ const app = () => {
         ...header(),
         ...main(),
         ...footer(),
-        handleRemove: (e) => { store.dispatch({ type: "REMOVE_TODO", payload: { index: +e.target.dataset.id } })},
-        handleCheckClick: (e) => { store.dispatch({ 
-            type: "TOGGLE_TODO", 
-            payload: { index: +e.target.dataset.id, isCompleted: e.target.checked } 
+        handleRemove: (e) => { store.dispatch({ type: "REMOVE_TODO", payload: { index: +e.target.dataset.id } }) },
+        handleCheckClick: (e) => {
+            store.dispatch({
+                type: "TOGGLE_TODO",
+                payload: { index: +e.target.dataset.id, isCompleted: e.target.checked }
             });
         },
         makeEditable: (e) => {
@@ -52,14 +53,14 @@ const app = () => {
     return context;
 }
 
-const store = new Store({ reducer, initialState: { Todos: [] } });
+const store = new Store({ reducer, initialState: { Todos: [], Completed_Todos: [], Active_Todos: [], Active_Filter: "" } });
 const domino = new Domino(store);
 
 const appContext = app();
 const appComponent = appContext.App();
 const root = document.body;
 const route = {
-    "/todo": {context: appContext, component: appComponent},
+    "/todo": { context: appContext, component: appComponent },
 }
 
 new Router(domino, route, root);
