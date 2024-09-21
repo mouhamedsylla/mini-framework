@@ -23,7 +23,7 @@ const header = () => {
         Header: () => component,
         index: 0,
         handleChange: (e) => {
-            if (e.target.value.length < 2) { return }
+            if (e.target.value.length < 1) { return }
             store.dispatch({ type: "ADD_TODO", payload: { task: e.target.value, isCompleted: false, index: context.index } })
             context.index++
             e.target.value = "";

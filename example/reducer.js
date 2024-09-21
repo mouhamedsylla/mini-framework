@@ -5,7 +5,7 @@ const reducer = (state, action) => {
                 ...state, 
                 Todos: [...state.Todos || [], action.payload ], 
                 seeMarkCompleted: true, 
-                todoCount: state.Todos?.length + 1 || 1
+                todoCount: (state.Todos?.filter(todo => !todo.isCompleted).length || 0) + 1
             };
 
         case "REMOVE_TODO":
@@ -13,19 +13,21 @@ const reducer = (state, action) => {
                 ...state, 
                 Todos: state.Todos.filter((todo) => todo.index !== action.payload.index), 
                 seeMarkCompleted: state.Todos.length > 1,
-                todoCount: state.Todos?.length - 1
+                todoCount: state.Todos.filter(todo => !todo.isCompleted && todo.index !== action.payload.index).length
             };
 
         case "MARK_COMPLETED":
             return { 
                 ...state, 
-                Todos: state.Todos.map(todo => ({ ...todo, isCompleted: action.payload.isCompleted })) 
+                Todos: state.Todos.map(todo => ({ ...todo, isCompleted: action.payload.isCompleted })),
+                todoCount: action.payload.isCompleted ? 0 : state.Todos.length
             };
 
         case "TOGGLE_TODO":
             return { 
                 ...state, 
-                Todos: state.Todos.map(todo => todo.index === action.payload.index ? { ...todo, isCompleted: action.payload.isCompleted } : todo) 
+                Todos: state.Todos.map(todo => todo.index === action.payload.index ? { ...todo, isCompleted: action.payload.isCompleted } : todo),
+                todoCount: state.Todos.filter(todo => !todo.isCompleted).length  + (action.payload.isCompleted ? -1 : 1)
             };
 
         case "CLEAR_COMPLETED":
@@ -34,5 +36,6 @@ const reducer = (state, action) => {
             return state;
     }
 }
+
 
 export default reducer;
