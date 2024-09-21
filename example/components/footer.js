@@ -15,7 +15,7 @@ const footer = () => {
 const footerBloc =  () => {
     const component = `
         <footer className="footer">
-                <span className="todo-count"></span>
+                <span className="todo-count">{todoCount === 1 ? todoCount + " item left!" : todoCount + " items left!"}</span>
                 <ul className="filters">
                     <li>
                         <a href="#/" className="selected">All</a>
@@ -35,6 +35,7 @@ const footerBloc =  () => {
         handleClearCompleted: () => {
             store.dispatch({ type: "CLEAR_COMPLETED" });
         },
+        todoCount: 1,
     }
     return context;
 }

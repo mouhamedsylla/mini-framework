@@ -39,7 +39,7 @@ const app = () => {
     return context;
 }
 
-const store = new Store({ reducer });
+const store = new Store({ reducer, initialState: { Todos: [] } });
 const domino = new Domino(store);
 
 const appContext = app();
