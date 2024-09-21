@@ -31,7 +31,12 @@ const app = () => {
         ...footer(),
         handleRemove: (e) => {
             store.dispatch({ type: "REMOVE_TODO", payload: { index: +e.target.dataset.id } });
-        }
+        },
+        handleCheckClick: (e) => {
+           console.log(e.target.checked)
+           console.log(e.target.dataset.id)
+           store.dispatch({ type: "TOGGLE_TODO", payload: { index: +e.target.dataset.id, isCompleted: e.target.checked } });
+        },
     }
     return context;
 }
