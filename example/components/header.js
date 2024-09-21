@@ -1,7 +1,7 @@
 import store from "../app.js";
 
 const header = () => {
-  const component = `
+    const component = `
             <header className="header" data-testid="header">
                 <h1>todos</h1>
                 <div className="input-container">
@@ -23,8 +23,9 @@ const header = () => {
         Header: () => component,
         index: 0,
         handleChange: (e) => {
+            if (e.target.value.length < 2) { return }
             store.dispatch({ type: "ADD_TODO", payload: { task: e.target.value, isCompleted: false, index: context.index } })
-            context.index ++
+            context.index++
             e.target.value = "";
         },
     }
