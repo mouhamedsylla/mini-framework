@@ -16,14 +16,8 @@ class Domino {
      * Exécute un composant avec un contexte donné et le monte dans le DOM.
      */
     run(context, component, root) {
-        console.log("Running component with context: ", context);
-
-        // if (!this.initialComponent) {
-        //     this.initialComponent = component;
-        // } 
         // Évaluation du code du composant avec le contexte
         const evaluatedCode = EvalJS(component, context);
-        console.log("Evaluated code: ", evaluatedCode);
         this.compiler.setCode(evaluatedCode);
         this.compiler.setContext(context);
         this.vdom = this.compiler.compile(); // Compilation en Virtual DOM
@@ -43,7 +37,6 @@ class Domino {
      */
     connectComponent(context, component, root) {
         const updateUI = (newState) => {
-            console.log("State changed: ", JSON.parse(JSON.stringify(newState)));
             this.run({ ...context, ...JSON.parse(JSON.stringify(newState)) }, this.initialComponent, root); // Met à jour l'UI avec le nouvel état
         };
 

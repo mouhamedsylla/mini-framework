@@ -20,7 +20,7 @@ export default class Compiler {
             const [, comment, bangOrClosingSlash, tagName, attributes, selfClosingSlash] = match;
 
             if (match.index > lastIndex) {
-                let text = this.code.slice(lastIndex, match.index).trim();
+                let text = this.code.slice(lastIndex, match.index);
                 
                 if (text) {
                     const node = hString(text);
