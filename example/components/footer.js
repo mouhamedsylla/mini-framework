@@ -21,10 +21,10 @@ const footerBloc =  () => {
                         <a href="#/" className="selected">All</a>
                     </li>
                     <li>
-                        <a href="#/active">Active</a>
+                        <a href="#/active" data-link>Active</a>
                     </li>
                     <li>
-                        <a href="#/completed">Completed</a>
+                        <a href="#/completed" data-link>Completed</a>
                     </li>
                 </ul>
                 <button className="clear-completed" onClick="handleClearCompleted">Clear completed</button>

@@ -10,12 +10,17 @@ export function setAttributes(el, attrs) {
     }
 
     if (style) {
-        console.log("STYLE", typeof style)
-        Object.entries(style).forEach(([name, value]) => {
-            console.log("NAME", name)
-            console.log("VALUE", value)
+        const allStyles = style.split(';').map(s => s.trim())
+        console.log(allStyles)
+        allStyles.forEach(style => {
+            const [name, value] = style.split(':').map(s => s.trim())
             setStyle(el, name, value)
         })
+        // Object.entries(style).forEach(([name, value]) => {
+        //     console.log("NAME", name)
+        //     console.log("VALUE", value)
+        //     setStyle(el, name, value)
+        // })
     }
 }
 
@@ -48,6 +53,7 @@ function setClass(el, className) {
 }
 
 export function setStyle(el, name, value) {
+    console.log("SET STYLE", el, name, value)
     el.style[name] = value
 }
 

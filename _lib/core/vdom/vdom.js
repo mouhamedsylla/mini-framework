@@ -41,7 +41,6 @@ export function createElementNode(vdom, parentEl) {
         toMount = parentEl
     }
 
-    console.log("parentEl", parentEl)
     children.forEach(child => mountDOM(child, toMount))
     parentEl !== toMount && parentEl.appendChild(toMount)
 }
