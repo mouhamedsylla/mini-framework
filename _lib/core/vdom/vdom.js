@@ -29,15 +29,20 @@ function createTextNode(vdom, parentEl, index) {
     insert(parentEl, textNode, index)
 }
 
-function createElementNode(vdom, parentEl, index) {
+export function createElementNode(vdom, parentEl) {
     const { tag, children } = vdom
+    var toMount 
+    if (tag !== "mini") {
+        const element = document.createElement(tag)
+        addProps(element, vdom)
+        vdom.el = element
+        toMount = element
+    } else {
+        toMount = parentEl
+    }
 
-    const element = document.createElement(tag)
-    addProps(element, vdom)
-    vdom.el = element
-
-    children.forEach(child => mountDOM(child, element))
-    insert(parentEl, element, index)
+    children.forEach(child => mountDOM(child, toMount))
+    parentEl !== toMount && parentEl.appendChild(toMount)
 }
 
 function removeTextNode(vdom) {
