@@ -13,7 +13,7 @@ const reducer = (state, action) => {
                     action.payload.isCompleted ? action.payload : null
                 ].filter(todo => todo !== null),
                 seeMarkCompleted: true,
-                todoCount: (state.Todos?.filter(todo => !todo.isCompleted).length || 0) + 1
+                todoCount: (state.Todos?.filter(todo => !todo.isCompleted).length || 0) + 1,
             };
 
         case "REMOVE_TODO":

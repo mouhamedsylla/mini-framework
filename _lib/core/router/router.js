@@ -4,6 +4,7 @@ class Router {
         this.domino = domino
         this.root = root
         this.initialize()
+        this.path = window.location.pathname
     }
 
     initialize() {
@@ -29,8 +30,9 @@ class Router {
 
     renderView(path) {
         const route = this.routes[path]
+        this.path = path
         if (route) {
-            this.domino.connectComponent(route.context, route.component, this.root)
+            this.domino.connectComponent({...route.context, path: this.path }, route.component, this.root)
         } else {
             this.root.innerHTML = "<h1>404 - Page Not Found</h1>"
         }
@@ -39,6 +41,7 @@ class Router {
     navigateTo(path) {
         history.pushState(null, "", path)
         this.renderView(path)
+        console.log(this.path)
     }
 }
 

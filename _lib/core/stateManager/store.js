@@ -11,8 +11,6 @@ export default class Store {
             set: function(state, key, value) {
                 state[key] = value;
                 self.events.publish("stateChange", self.state);
-                console.log(`State changed: ${key}: ${value}`);
-                console.log("New state: ", self.state);
                 return true;
             }
         });

@@ -1,17 +1,22 @@
-import todoItem from "../../example/components/todoItem.js";
-import store from "../app.js";
+import todoItem from "./todoItem.js";
+import markCompleted from "./markcompleted.js";
 
 const main = () => {
     
     const context = {
         Main: () => component,
-        Todos: [],
-        Active_Todos: [],
-        Completed_Todos: [],
-        Active_Filter: "all",
         createItem: (todo) => todoItem(todo).TodoItem(),
         ...markCompleted(),
         seeMarkCompleted: false,
+        filter: (Fncreate, todos, path) => {
+            if (path === "/#/active") {
+                return todos.filter(todo => !todo.isCompleted).map((todo) => Fncreate(todo)).join("");
+            }
+            if (path === "/#/completed") {
+                return todos.filter(todo => todo.isCompleted).map((todo) => Fncreate(todo)).join("");
+            }
+            return todos.map((todo) => Fncreate(todo)).join("");
+        }
     }
 
     const component = `
@@ -20,24 +25,10 @@ const main = () => {
                     {seeMarkCompleted ? MarkCompleted() : ""}
                 </div>
                 <ul className="todo-list">
-                    {Todos.map(todo => createItem(todo)).join("")}
+                    { filter(createItem, Todos, path)}
                 </ul>
             </main>
     `
-    return context;
-}
-
-const markCompleted =  () => {
-    const component = `
-        <input onChange=handleMarkCompleted className="toggle-all" type="checkbox" />
-        <label className="toggle-all-label" for="toggle-all">Mark all as complete</label>
-    `
-    const context = {
-        MarkCompleted: () => component,
-        handleMarkCompleted: (e) => {
-            store.dispatch({ type: "MARK_COMPLETED", payload: { isCompleted: e.target.checked } });
-        }
-    }
     return context;
 }
 
