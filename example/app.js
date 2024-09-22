@@ -9,7 +9,8 @@ import completed from "./pages/completed.js"
 const store = new Store({ 
     reducer, 
     initialState: { 
-        Todos: [], 
+        Todos: [],
+        seeMarkCompleted: false, 
     }
 });
 
@@ -26,15 +27,17 @@ const USER_ACTIONS = {
     makeEditable: (e) => {
         e.target.contentEditable = true;
         e.target.focus();
-        e.target.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                e.target.contentEditable = false;
-                store.dispatch({ 
-                    type: "EDIT_TODO", 
-                    payload: { index: +e.target.previousElementSibling.dataset.id, task: e.target.innerText } 
-                });
-            }
-        });
+            e.target.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    if (e.target.innerText.length < 2) { return }
+                    e.target.contentEditable = false;
+                    store.dispatch({ 
+                        type: "EDIT_TODO", 
+                        payload: { index: +e.target.previousElementSibling.dataset.id, task: e.target.innerText } 
+                    });
+                }
+            });
     },
     handleChange: (e) => {
         if (e.target.value.length < 2) { return }
@@ -42,6 +45,7 @@ const USER_ACTIONS = {
         e.target.value = ""
         USER_ACTIONS.index++
     },
+    handleClearCompleted: () => { store.dispatch({ type: "CLEAR_COMPLETED" }) },
 }
 
 const domino = new Domino(store);
@@ -62,17 +66,17 @@ const root = document.body;
 
 // routing
 const route = {
-    "/todo": { context: {
+    "/": { context: {
         ...appContext, 
         ...USER_ACTIONS,
     }, component: appComponent },
 
-    "/#/active": { context: {
+    "/active": { context: {
         ...activeContext, 
         ...USER_ACTIONS, 
     }, component: activeComponent },
 
-    "/#/completed": { context: {
+    "/completed": { context: {
         ...completeContext, 
         ...USER_ACTIONS, 
     }, component: completeComponent },

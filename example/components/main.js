@@ -9,10 +9,10 @@ const main = () => {
         ...markCompleted(),
         seeMarkCompleted: false,
         filter: (Fncreate, todos, path) => {
-            if (path === "/#/active") {
+            if (path === "/active") {
                 return todos.filter(todo => !todo.isCompleted).map((todo) => Fncreate(todo)).join("");
             }
-            if (path === "/#/completed") {
+            if (path === "/completed") {
                 return todos.filter(todo => todo.isCompleted).map((todo) => Fncreate(todo)).join("");
             }
             return todos.map((todo) => Fncreate(todo)).join("");

@@ -4,14 +4,6 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 Todos: [...state.Todos || [], action.payload],
-                Active_Todos: [
-                    ...state.Active_Todos || [],
-                    !action.payload.isCompleted ? action.payload : null
-                ].filter(todo => todo !== null),
-                Completed_Todos: [
-                    ...state.Completed_Todos || [],
-                    action.payload.isCompleted ? action.payload : null
-                ].filter(todo => todo !== null),
                 seeMarkCompleted: true,
                 todoCount: (state.Todos?.filter(todo => !todo.isCompleted).length || 0) + 1,
             };
@@ -45,16 +37,7 @@ const reducer = (state, action) => {
             };
 
         case "CLEAR_COMPLETED":
-            return { ...state, Todos: state.Todos.filter(todo => !todo.isCompleted) };
-
-        case "FILTER_ALL":
-            return { ...state, Active_Filter: "all" };
-
-        case "FILTER_ACTIVE":
-            return { ...state, Active_Filter: "active" };
-
-        case "FILTER_COMPLETED":
-            return { ...state, Active_Filter: "completed" };
+            return { ...state, Todos: state.Todos.filter(todo => !todo.isCompleted)};
 
         default:
             return state;
