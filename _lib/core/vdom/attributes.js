@@ -16,11 +16,6 @@ export function setAttributes(el, attrs) {
             const [name, value] = style.split(':').map(s => s.trim())
             setStyle(el, name, value)
         })
-        // Object.entries(style).forEach(([name, value]) => {
-        //     console.log("NAME", name)
-        //     console.log("VALUE", value)
-        //     setStyle(el, name, value)
-        // })
     }
 }
 

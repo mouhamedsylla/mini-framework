@@ -51,7 +51,7 @@ Here is the project structure used in Domino:
 4. **Routing**: The router listens for changes in the browser’s URL and maps the path to a corresponding component. It updates the view dynamically as users navigate between different parts of the application.
 
 ## Run todo example
-Run this cammand and access to our todo in url **http://localhost/todo:3000**
+Run this cammand and access to our todo in url **http://localhost:3000**
 ```bash
 npm run start
 ```
